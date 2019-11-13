@@ -1,0 +1,31 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Software
+      win_shell: wmic product get name,version
+      register: startup
+    - debug: var=startup.stdout_lines
+
+    - name: Query Startup Software
+      win_shell: wmic startup get caption,command
+      register: software
+    - debug: var=software.stdout_lines
+
+- hosts: windows_server
+  tasks:
+    - name: Query Server Components
+      win_shell: Get-WindowsFeature | Where Installed
+      register: software
+    - debug: var=software.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Software
+      shell: dpkg -l
+      register: software
+    - debug: var=software.stdout_lines
+
+    - name: Query Startup Software
+      shell: systemctl list-unit-files --type=service --state=enabled --all --no-pager
+      register: startup
+    - debug: var=startup.stdout_lines

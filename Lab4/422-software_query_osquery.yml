@@ -1,0 +1,14 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Software
+      win_shell: echo "select * from programs;" | osqueryi
+      register: software
+    - debug: var=software.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Software
+      shell: echo "select * from deb_packages;" | osqueryi
+      register: software
+    - debug: var=software.stdout_lines

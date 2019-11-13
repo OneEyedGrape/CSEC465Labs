@@ -1,0 +1,47 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Hostname
+      win_shell: |
+        (Get-WmiObject Win32_ComputerSystem).Name
+        (Get-WmiObject Win32_ComputerSystem).Domain
+      register: hostname
+    - debug: var=hostname.stdout_lines
+
+    - name: Query OS Name and Patch
+      win_shell: systeminfo | findstr /B /C:"OS Name:" /B /C:"OS Version:"
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query IP Information
+      win_command: ipconfig
+      register: ip
+    - debug: var=ip.stdout_lines
+
+    - name: Query Local Users
+      win_command: wmic useraccount get name
+      register: local
+    - debug: var=local.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Hostname
+      command: hostname
+      register: host
+    - debug: var=host.stdout_lines
+
+    - name: Query OS Name and Patch
+      shell: lsb_release -a | grep Description
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query IP Information
+      command: ip a
+      register: ip
+    - debug: var=ip.stdout_lines
+
+    - name: Query Local Users
+      shell: awk -F':' '{ print $1}' /etc/passwd
+      ignore_errors: yes
+      register: local
+    - debug: var=local.stdout_lines

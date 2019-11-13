@@ -1,0 +1,38 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Users
+      win_shell: |
+        echo "select * from last;" | osqueryi
+      register: host
+    - debug: var=host.stdout_lines
+
+    - name: Query Processes
+      win_shell: |
+        echo "select pid, name, path, uid, parent from processes;" | osqueryi
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query Outbound Connections
+      win_shell: echo "select pid, protocol, local_address, remote_address, local_port, remote_port, path from process_open_sockets;" | osqueryi
+      register: outbound
+    - debug: var=outbound.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Users
+      shell: |
+        echo "select * from last;" | osqueryi
+      register: host
+    - debug: var=host.stdout_lines
+
+    - name: Query Processes
+      shell: |
+        echo "select pid, name, path, uid, parent from processes;" | osqueryi
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query Outbound Connections
+      shell: echo "select pid, protocol, local_address, remote_address, local_port, remote_port, path from process_open_sockets;" | osqueryi
+      register: outbound
+    - debug: var=outbound.stdout_lines

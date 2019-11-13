@@ -1,0 +1,34 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Recent Users
+      win_command: quser
+      register: users
+    - debug: var=users.stdout_lines
+
+    - name: Query Processes
+      win_shell: wmic process get processid,parentprocessid,executablepath,name
+      register: proc
+    - debug: var=proc.stdout_lines
+
+    - name: Query Outbound Connections
+      win_command: netstat
+      register: out
+    - debug: var=out.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Recent Users
+      command: last
+      register: users
+    - debug: var=users.stdout_lines
+
+    - name: Query Processes
+      command: ps -efj
+      register: proc
+    - debug: var=proc.stdout_lines
+
+    - name: Query Outbound Connections
+      command: netstat
+      register: out
+    - debug: var=out.stdout_lines

@@ -1,0 +1,23 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+  - name: Install OS Query
+    win_chocolatey:
+      name: osquery
+
+- hosts: linux
+  tasks:
+  - name: add osquery repository
+    shell: |
+      export OSQUERY_KEY=1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys $OSQUERY_KEY
+      add-apt-repository -y 'deb [arch=amd64] https://pkg.osquery.io/deb deb main'
+      apt-get update
+    become: yes
+
+  - name: Install OS Query
+    apt:
+      name: osquery
+      force_apt_get: yes
+      force: yes
+    become: yes

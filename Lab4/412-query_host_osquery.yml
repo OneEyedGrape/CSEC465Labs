@@ -1,0 +1,48 @@
+---
+- hosts: windows_workstation, windows_server
+  tasks:
+    - name: Query Hostname
+      win_shell: |
+        echo "select hostname from system_info;" | osqueryi
+        echo "select domain_name from ntdomains;" | osqueryi
+      register: host
+    - debug: var=host.stdout_lines
+
+    - name: Query OS Name and Patch
+      win_shell: echo "select name, version from os_version;" | osqueryi
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query IP Information
+      win_shell: echo "select interface, address, mask, broadcast from interface_addresses;" | osqueryi
+      register: ip
+    - debug: var=ip.stdout_lines
+
+    - name: Query Local Users
+      win_shell: echo "select uid, username from users;" | osqueryi
+      register: local
+    - debug: var=local.stdout_lines
+
+- hosts: linux
+  tasks:
+    - name: Query Hostname
+      shell: |
+        echo "select hostname from system_info;" | osqueryi
+        echo "select domain_name from ntdomains;" | osqueryi
+      register: host
+    - debug: var=host.stdout_lines
+
+    - name: Query OS Name and Patch
+      shell: echo "select name, version from os_version;" | osqueryi
+      register: os
+    - debug: var=os.stdout_lines
+
+    - name: Query IP Information
+      shell: echo "select interface, address, mask, broadcast from interface_addresses;" | osqueryi
+      register: ip
+    - debug: var=ip.stdout_lines
+
+    - name: Query Local Users
+      shell: echo "select uid, username from users;" | osqueryi
+      register: local
+    - debug: var=local.stdout_lines

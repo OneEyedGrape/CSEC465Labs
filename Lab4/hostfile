@@ -1,0 +1,23 @@
+[linux]
+192.168.204.0		ansible_connection=ssh
+
+[linux:vars]
+ansible_become_password=student
+
+[windows_workstation]
+192.168.203.68
+
+[windows_workstation:vars]
+ansible_user=student
+ansible_password=student
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+
+[windows_server]
+192.168.203.158
+
+[windows_server:vars]
+ansible_user=Administrator
+ansible_password=Password123
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
